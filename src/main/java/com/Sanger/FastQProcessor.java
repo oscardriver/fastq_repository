@@ -45,9 +45,9 @@ public class FastQProcessor
                     gzipFastqInputLines = new BufferedReader(new InputStreamReader(gzipFastqInputStream));
 
                     if (flag.toUpperCase() == "N") {
-                        countNucleotides(gzipFastqInputStream);
+                        countNucleotides(gzipFastqInputLines);
                     } else if (flag.toUpperCase() == "S") {
-                        countSequences(gzipFastqInputStream);
+                        countSequences(gzipFastqInputLines);
                     } else {
                         System.err.println("No valid flag specified.");
                         System.err.println("Valid flags are: 'n' and 'N' for nucleotides; 's' and 'S' for sequences.");
@@ -82,30 +82,40 @@ public class FastQProcessor
     }
 
     /**
-     * Extract data from an input stream, printing (to the console) the number
+     * Extract lines from an input stream, printing (to the console) the number
      * of nucleotides found. This corresponds to the total number of letters
      * found across all field 2 lines (each sequence has 4 fields).
      * 
-     * @param    fastqInput    The stream to extract data from
+     * @param    fastqInput    The stream reader to extract data from
      */
-    private static void countNucleotides( GZIPInputStream fastqInput) {
+    private static void countNucleotides( BufferedReader fastqInput) {
 
     } 
 
     /**
-     * Extract data from an input stream, printing (to the console) the number
+     * Extract lines from an input stream, printing (to the console) the number
      * of sequences found. This will always correspond to the total number of 
      * non-blank lines divided by 4
      * 
-     * @param    fastqInput    The stream to extract data from
+     * @param    fastqInput    The stream reader to extract data from
      * @throws IOException
      */
-    private static void countSequences( GZIPInputStream fastqInput) throws IOException {
-        // Data yet to be processed within the file
-        int remainingData;
+    private static void countSequences( BufferedReader fastqInput) throws IOException {
+        int nonBlankCount = 0;
+        
+        // Line yet to be processed within the file
+        String lineToBeProcessed;
 
-        while ((remainingData = fastqInput.read()) != -1) {
-               
+        while ((lineToBeProcessed = fastqInput.readLine()) != null) {
+            if (lineToBeProcessed.isBlank()) {
+              nonBlankCount++;
+            }  
         }
+
+        int numberOfSequences = 0;
+        if (nonBlankCount > 0) {
+            numberOfSequences = nonBlankCount / 4;
+        }
+        System.out.println("Number of sequences found in file: " + numberOfSequences);
     }
 }

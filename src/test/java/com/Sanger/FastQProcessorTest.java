@@ -5,9 +5,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Unit test for simple App.
+ * Verify the functions of FastQProcessor.
+ * 
+ * @author     Oscar Driver
+ * @version    %I%
+ * @since      1.17
+ *
  */
-public class AppTest 
+public class FastQProcessorTest 
 {
     /**
      * Rigorous Test :-)

@@ -10,9 +10,11 @@ package com.sanger;
  *
  */
 
-import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.zip.GZIPInputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 
 public class FastQProcessor 
 {
@@ -32,49 +34,48 @@ public class FastQProcessor
         String filepath = args[0];
         String flag = args[1];
 
-        InputStream fastqInputStream = null;
+        // Assuming FASTQ files to be processed are all formatted as .gzip
+        GZIPInputStream gzipFastqInputStream = null;
+
         try {
-            fastqInputStream = new FileInputStream(filepath);
+            gzipFastqInputStream = new GZIPInputStream(new FileInputStream(filepath));
 
-            // Assuming FASTQ files to be processed are all formatted as .gzip
-            GZIPInputStream gzipFastqInputStream = null;
-            try {
-                gzipFastqInputStream = new GZIPInputStream(fastqInputStream);
-                if (flag.toUpperCase() == "N") {
-                  countNucleotides(gzipFastqInputStream);
-                } else if (flag.toUpperCase() == "S") {
-                  countSequences(gzipFastqInputStream);
-                } else {
-                    System.err.println("No valid flag specified.");
-                    System.err.println("Valid flags are: 'n' and 'N' for nucleotides; 's' and 'S' for sequences.");
-                    System.err.println("The flag specified was: " + flag);
-                }
+            BufferedReader gzipFastqInputLines = null;
+                try {
+                    gzipFastqInputLines = new BufferedReader(new InputStreamReader(gzipFastqInputStream));
 
-            } catch (Exception gzipOpeningError) {
-              System.err.println("Error opening gzip stream");
-              System.err.println(gzipOpeningError);
-            } finally {
-                if (gzipFastqInputStream != null) {
-                    try {
-                        gzipFastqInputStream.close();
-                    } catch (Exception gzipClosureError) {
-                        System.err.println("Error closing gzip stream");
-                        System.err.println(gzipClosureError);
+                    if (flag.toUpperCase() == "N") {
+                        countNucleotides(gzipFastqInputStream);
+                    } else if (flag.toUpperCase() == "S") {
+                        countSequences(gzipFastqInputStream);
+                    } else {
+                        System.err.println("No valid flag specified.");
+                        System.err.println("Valid flags are: 'n' and 'N' for nucleotides; 's' and 'S' for sequences.");
+                        System.err.println("The flag specified was: " + flag);
+                    }
+                } catch (Exception streamReadersException) {
+                    System.err.println("Error with one of the file stream's readers");
+                    streamReadersException.printStackTrace();
+                } finally {
+                    if (gzipFastqInputLines != null) {
+                        try {
+                            gzipFastqInputLines.close();
+                        } catch (Exception streamReadersClosureException) {
+                            System.err.println("Error with the closure of one of the file stream's readers");
+                            streamReadersClosureException.printStackTrace();
+                        }
                     }
                 }
-            }
-
-        } catch (Exception inputStreamOpeningError) {
-            System.err.println("Error opening input regardless of whether it's zipped");
-            System.err.println(inputStreamOpeningError);
+        } catch (Exception streamException) {
+            System.err.println("Error with one of the file's streams");
+            streamException.printStackTrace();
         } finally {
-            // Close all streams
-            if (fastqInputStream != null) {
+            if (gzipFastqInputStream != null) {
                 try {
-                    fastqInputStream.close();
-                } catch (Exception inputStreamClosureError) {
-                    System.err.println("Error closing input regardless of whether it's zipped");
-                    System.err.println(inputStreamClosureError);
+                    gzipFastqInputStream.close();
+                } catch (Exception streamClosureException) {
+                    System.err.println("Error with closing one of the file's streams");
+                    streamClosureException.printStackTrace();
                 }
             }
         }
@@ -97,8 +98,14 @@ public class FastQProcessor
      * non-blank lines divided by 4
      * 
      * @param    fastqInput    The stream to extract data from
+     * @throws IOException
      */
-    private static void countSequences( GZIPInputStream fastqInput) {
+    private static void countSequences( GZIPInputStream fastqInput) throws IOException {
+        // Data yet to be processed within the file
+        int remainingData;
 
+        while ((remainingData = fastqInput.read()) != -1) {
+               
+        }
     }
 }

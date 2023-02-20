@@ -37,13 +37,13 @@ public class FastQProcessor
             fastqInputStream = new FileInputStream(filepath);
 
             // Assuming FASTQ files to be processed are all formatted as .gzip
-            InputStream gzipFastqInputStream = null;
+            GZIPInputStream gzipFastqInputStream = null;
             try {
                 gzipFastqInputStream = new GZIPInputStream(fastqInputStream);
                 if (flag.toUpperCase() == "N") {
-
+                  countNucleotides(gzipFastqInputStream);
                 } else if (flag.toUpperCase() == "S") {
-
+                  countSequences(gzipFastqInputStream);
                 } else {
                     System.err.println("No valid flag specified.");
                     System.err.println("Valid flags are: 'n' and 'N' for nucleotides; 's' and 'S' for sequences.");
@@ -78,5 +78,27 @@ public class FastQProcessor
                 }
             }
         }
+    }
+
+    /**
+     * Extract data from an input stream, printing (to the console) the number
+     * of nucleotides found. This corresponds to the total number of letters
+     * found across all field 2 lines (each sequence has 4 fields).
+     * 
+     * @param    fastqInput    The stream to extract data from
+     */
+    private static void countNucleotides( GZIPInputStream fastqInput) {
+
+    } 
+
+    /**
+     * Extract data from an input stream, printing (to the console) the number
+     * of sequences found. This will always correspond to the total number of 
+     * non-blank lines divided by 4
+     * 
+     * @param    fastqInput    The stream to extract data from
+     */
+    private static void countSequences( GZIPInputStream fastqInput) {
+
     }
 }

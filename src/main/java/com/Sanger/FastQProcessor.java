@@ -10,6 +10,10 @@ package com.sanger;
  *
  */
 
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.util.zip.GZIPInputStream;
+
 public class FastQProcessor 
 {
     /**
@@ -25,6 +29,54 @@ public class FastQProcessor
      */
     public static void main( String[] args )
     {
-        
+        String filepath = args[0];
+        String flag = args[1];
+
+        InputStream fastqInputStream = null;
+        try {
+            fastqInputStream = new FileInputStream(filepath);
+
+            // Assuming FASTQ files to be processed are all formatted as .gzip
+            InputStream gzipFastqInputStream = null;
+            try {
+                gzipFastqInputStream = new GZIPInputStream(fastqInputStream);
+                if (flag.toUpperCase() == "N") {
+
+                } else if (flag.toUpperCase() == "S") {
+
+                } else {
+                    System.err.println("No valid flag specified.");
+                    System.err.println("Valid flags are: 'n' and 'N' for nucleotides; 's' and 'S' for sequences.");
+                    System.err.println("The flag specified was: " + flag);
+                }
+
+            } catch (Exception gzipOpeningError) {
+              System.err.println("Error opening gzip stream");
+              System.err.println(gzipOpeningError);
+            } finally {
+                if (gzipFastqInputStream != null) {
+                    try {
+                        gzipFastqInputStream.close();
+                    } catch (Exception gzipClosureError) {
+                        System.err.println("Error closing gzip stream");
+                        System.err.println(gzipClosureError);
+                    }
+                }
+            }
+
+        } catch (Exception inputStreamOpeningError) {
+            System.err.println("Error opening input regardless of whether it's zipped");
+            System.err.println(inputStreamOpeningError);
+        } finally {
+            // Close all streams
+            if (fastqInputStream != null) {
+                try {
+                    fastqInputStream.close();
+                } catch (Exception inputStreamClosureError) {
+                    System.err.println("Error closing input regardless of whether it's zipped");
+                    System.err.println(inputStreamClosureError);
+                }
+            }
+        }
     }
 }

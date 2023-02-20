@@ -88,8 +88,27 @@ public class FastQProcessor
      * 
      * @param    fastqInput    The stream reader to extract data from
      */
-    private static void countNucleotides( BufferedReader fastqInput) {
+    private static void countNucleotides( BufferedReader fastqInput) throws IOException {
+        // Line yet to be processed within the file
+        String lineToBeProcessed;
 
+        int sequenceLine = 0;
+
+        while ((lineToBeProcessed = fastqInput.readLine()) != null) {
+            if (lineToBeProcessed.isBlank()) {
+              sequenceLine = 0;
+            } else {
+              sequenceLine++;
+
+              // Where the number of nucleotides can be found
+              if (sequenceLine == 2) {
+                String[] sequenceArray = lineToBeProcessed.split("\\W+");
+
+                System.out.println("Number of nucleotides found in file: " 
+                                                  + sequenceArray.length);
+              }  
+            }
+        }
     } 
 
     /**

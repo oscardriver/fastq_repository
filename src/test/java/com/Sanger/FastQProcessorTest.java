@@ -15,6 +15,18 @@ import org.junit.Test;
 public class FastQProcessorTest 
 {
     /**
+     * Test sequence counting in file with only blank lines
+     */
+    @Test
+    public void testSequenceCountingBlankLines() {
+        
+    }
+
+    /**
+     * Test nucleotide counting
+     */ 
+
+    /**
      * Rigorous Test :-)
      */
     @Test

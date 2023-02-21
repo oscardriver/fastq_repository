@@ -44,9 +44,9 @@ public class FastQProcessor
                 try {
                     gzipFastqInputLines = new BufferedReader(new InputStreamReader(gzipFastqInputStream));
 
-                    if (flag.toUpperCase() == "N") {
+                    if (flag.toUpperCase().equals("N")) {
                         countNucleotides(gzipFastqInputLines);
-                    } else if (flag.toUpperCase() == "S") {
+                    } else if (flag.toUpperCase().equals("S")) {
                         countSequences(gzipFastqInputLines);
                     } else {
                         System.err.println("No valid flag specified.");
@@ -89,26 +89,29 @@ public class FastQProcessor
      * @param    fastqInput    The stream reader to extract data from
      */
     private static void countNucleotides( BufferedReader fastqInput) throws IOException {
+        int numberOfNucleotides = 0;
+        
         // Line yet to be processed within the file
         String lineToBeProcessed;
-
+        // Each sequence has four non-blank lines
         int sequenceLine = 0;
 
         while ((lineToBeProcessed = fastqInput.readLine()) != null) {
-            if (lineToBeProcessed.isBlank()) {
+            if (sequenceLine == 4) {
               sequenceLine = 0;
-            } else {
+            } else if (!(lineToBeProcessed.isBlank())) {
               sequenceLine++;
 
               // Where the number of nucleotides can be found
               if (sequenceLine == 2) {
                 String[] sequenceArray = lineToBeProcessed.split("\\W+");
 
-                System.out.println("Number of nucleotides found in file: " 
-                                                  + sequenceArray.length);
+                numberOfNucleotides += sequenceArray.length;
               }  
             }
         }
+
+        System.out.println("Number of nucleotides found in file: " + numberOfNucleotides);
     } 
 
     /**

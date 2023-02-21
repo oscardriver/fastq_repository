@@ -44,9 +44,9 @@ public class FastQProcessor
                 try {
                     gzipFastqInputLines = new BufferedReader(new InputStreamReader(gzipFastqInputStream));
 
-                    if (flag.toUpperCase().equals("N")) {
+                    if (flag.equalsIgnoreCase("N")) {
                         countNucleotides(gzipFastqInputLines);
-                    } else if (flag.toUpperCase().equals("S")) {
+                    } else if (flag.equalsIgnoreCase("S")) {
                         countSequences(gzipFastqInputLines);
                     } else {
                         System.err.println("No valid flag specified.");
@@ -88,7 +88,7 @@ public class FastQProcessor
      * 
      * @param    fastqInput    The stream reader to extract data from
      */
-    private static void countNucleotides( BufferedReader fastqInput) throws IOException {
+    public static void countNucleotides( BufferedReader fastqInput) throws IOException {
         int numberOfNucleotides = 0;
         
         // Line yet to be processed within the file
@@ -104,9 +104,12 @@ public class FastQProcessor
 
               // Where the number of nucleotides can be found
               if (sequenceLine == 2) {
+                // Remove all non-letter characters
                 String[] sequenceArray = lineToBeProcessed.split("\\W+");
-
-                numberOfNucleotides += sequenceArray.length;
+                // Count remaining letter characters
+                for (int lettersString = 0; lettersString < sequenceArray.length; lettersString++) {
+                  numberOfNucleotides += sequenceArray[lettersString].length();
+                }
               }  
             }
         }
@@ -122,14 +125,14 @@ public class FastQProcessor
      * @param    fastqInput    The stream reader to extract data from
      * @throws IOException
      */
-    private static void countSequences( BufferedReader fastqInput) throws IOException {
+    public static void countSequences( BufferedReader fastqInput) throws IOException {
         int nonBlankCount = 0;
         
         // Line yet to be processed within the file
         String lineToBeProcessed;
 
         while ((lineToBeProcessed = fastqInput.readLine()) != null) {
-            if (lineToBeProcessed.isBlank()) {
+            if (!(lineToBeProcessed.isBlank())) {
               nonBlankCount++;
             }  
         }
